@@ -156,15 +156,12 @@ namespace iutNotify
         #endregion
 
         #region Bubble
-        public void AddBubbles(List<NetworkMessage> messages)
+        public void EnqueueBubble(string title, string text, DateTime addedAt, string url, bool isNotif)
         {
-            foreach (NetworkMessage message in messages)
-            {
-                bubbles.Add(new Bubble(message));
+            bubbles.Add(new Bubble(title, text, addedAt, url));
+            if(!isNotif)
+                this.Invoke(new MethodInvoker(delegate { AppendMessageHist(bubbles.Count - 1, title); }));
 
-                if (!message.notif)
-                    this.Invoke(new MethodInvoker(delegate { AppendMessageHist(bubbles.Count - 1, message.title); }));
-            }
             if (historyLength > 0)
                 this.Invoke(new MethodInvoker(delegate { SetPosition(); }));
             NextBubbleIfPossible();
@@ -224,10 +221,11 @@ namespace iutNotify
         private ToolTipIcon icon;
         private string url;
 
-        public Bubble(NetworkMessage message)
+        public Bubble(string title, string message, DateTime addedAt, string url)
         {
-            title = message.title;
-            timeout = 30000;
+            this.title = title;
+            this.timeout = 30000;
+            this.url = url;
 
             string lTitle = title.ToLower();
             if (lTitle.Contains("erreur") || lTitle.Contains("impossible"))
@@ -237,12 +235,10 @@ namespace iutNotify
             else
                 icon = ToolTipIcon.Info;
 
-            url = message.url;
-
             text = "";
-            if (message.addedAt != null)
-                text += message.dateAdded.ToString() + "\n";
-            text += message.text;
+            if (addedAt != null)
+                text += addedAt.ToString() + "\n";
+            text += message;
             if (url != null && url != "")
                 text += "\n\nCliquez ici pour en savoir plus.";
         }

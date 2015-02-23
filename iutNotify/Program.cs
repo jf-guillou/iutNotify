@@ -7,7 +7,7 @@ namespace iutNotify
     static class Program
     {
         public static string MY_NAME = "iutNotify";
-        public static string MY_VER = "0.1";
+        public static string MY_VER = "0.2";
         static Mutex mutex = new Mutex(true, System.Diagnostics.Debugger.IsAttached ? "{94E104A0-6FC6-11E4-9803-0800200C9A65}" : "{94E104A0-6FC6-11E4-9803-0800200C9A66}");
 
         /// <summary>
